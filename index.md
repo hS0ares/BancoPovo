@@ -151,17 +151,17 @@
         <h2 style="text-align: center; margin-bottom: 2rem;">Nossos Serviços</h2>
         <div class="features-grid">
             <div class="feature-card">
-                <img src="/api/placeholder/64/64" alt="Conta Digital">
+                <img src="banco_conta.jpg" alt="Conta Digital">
                 <h3>Conta Digital</h3>
                 <p>Conta sem mensalidade e com transferências gratuitas.</p>
             </div>
             <div class="feature-card">
-                <img src="/api/placeholder/64/64" alt="Cartão de Crédito">
+                <img src="banco_cartao.jpg" alt="Cartão de Crédito">
                 <h3>Cartão de Crédito</h3>
                 <p>Sem anuidade e com cashback em todas as compras.</p>
             </div>
             <div class="feature-card">
-                <img src="/api/placeholder/64/64" alt="Investimentos">
+                <img src="banco_investimento.jpg" alt="Investimentos">
                 <h3>Investimentos</h3>
                 <p>As melhores opções para fazer seu dinheiro render.</p>
             </div>
