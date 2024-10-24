@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -165,11 +164,6 @@
                 <img src="/api/placeholder/64/64" alt="Investimentos">
                 <h3>Investimentos</h3>
                 <p>As melhores opções para fazer seu dinheiro render.</p>
-            </div>
-            <div class="feature-card">
-                <img src="/api/placeholder/64/64" alt="Empréstimos">
-                <h3>Empréstimos</h3>
-                <p>Taxas competitivas e aprovação rápida.</p>
             </div>
         </div>
     </section>
