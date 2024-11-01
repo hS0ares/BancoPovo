@@ -425,7 +425,7 @@
             const authenticated = await authenticate();
             
             if (authenticated) {
-                loadChats();
+                addChatToList();
             } else {
                 alert('Falha na autenticação. Por favor, tente novamente.');
             }
