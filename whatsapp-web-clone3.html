@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>WhatsApp Web Simulador</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
+    <style>
+        /* ... (estilos anteriores permanecem iguais) ... */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #d1d7db;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 1400px;
+            height: 90vh;
+            display: flex;
+            background-color: #fff;
+            box-shadow: 0 6px 18px rgba(11,20,26,.05);
+        }
+
+        .sidebar {
+            width: 30%;
+            background-color: #fff;
+            border-right: 1px solid #e9edef;
+        }
+
+        .header {
+            background-color: #f0f2f5;
+            padding: 10px 16px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #dfe5e7;
+        }
+
+        .chat-list {
+            overflow-y: auto;
+            height: calc(100% - 60px);
+        }
+
+        .chat-item {
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #f0f2f5;
+            cursor: pointer;
+        }
+
+        .chat-item:hover {
+            background-color: #f0f2f5;
+        }
+
+        .chat-info {
+            margin-left: 15px;
+        }
+
+        .chat-name {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .chat-preview {
+            font-size: 13px;
+            color: #667781;
+        }
+
+        .main-chat {
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background-color: #f0f2f5;
+            padding: 10px 16px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            background-color: #efeae2;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            max-width: 65%;
+            padding: 6px 7px 8px 9px;
+            border-radius: 7.5px;
+            margin-bottom: 10px;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .received {
+            background-color: #fff;
+            align-self: flex-start;
+        }
+
+        .sent {
+            background-color: #d9fdd3;
+            align-self: flex-end;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #667781;
+            float: right;
+            margin-left: 8px;
+            margin-top: 3px;
+        }
+
+        .chat-input {
+            background-color: #f0f2f5;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .message-input {
+            flex-grow: 1;
+            padding: 9px 12px;
+            border: none;
+            border-radius: 8px;
+            margin: 0 8px;
+            outline: none;
+        }
+
+        .send-button {
+            background-color: transparent;
+            border: none;
+            color: #54656f;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .send-button:hover {
+            color: #00a884;
+        } 
+
+        /* Adiciona estilos para o formulário de pré-chat */
+        .pre-chat-form {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+        }
+
+        .pre-chat-form.visible {
+            display: block;
+        }
+
+        .pre-chat-form input {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .pre-chat-form button {
+            width: 100%;
+            padding: 10px;
+            background: #00a884;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .pre-chat-form button:hover {
+            background: #008c6f;
+        }
+
+        .new-chat-button {
+            margin: 10px;
+            padding: 8px 16px;
+            background: #00a884;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .new-chat-button:hover {
+            background: #008c6f;
+        }
+    </style>
+</head>
+<body>
+    <!-- Formulário de pré-chat -->
+    <div class="pre-chat-form" id="preChatForm">
+        <h3>Iniciar nova conversa</h3>
+        <input type="text" id="firstName" placeholder="Primeiro nome">
+        <input type="email" id="email" placeholder="E-mail">
+        <button onclick="createConversation()">Iniciar conversa</button>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="header">
+                <div class="profile-img"></div>
+                <div>Status: <span id="connection-status">Desconectado</span></div>
+                <div id="token-status"></div>
+            </div>
+            <button class="new-chat-button" onclick="showPreChatForm()">Nova Conversa</button>
+            <div class="chat-list" id="chat-list">
+                <!-- Chats serão inseridos aqui -->
+            </div>
+        </div>
+        <div class="main-chat">
+            <div class="chat-header">
+                <div class="profile-img"></div>
+                <div class="chat-info">
+                    <div class="chat-name" id="current-chat">Selecione um chat</div>
+                </div>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <!-- Mensagens serão inseridas aqui -->
+            </div>
+            <div class="chat-input">
+                <input type="text" class="message-input" id="message-input" placeholder="Digite uma mensagem">
+                <button class="send-button" onclick="sendMessage()">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentChat = null;
+        let accessToken = null;
+        let eventSource = null;
+        const API_BASE_URL = 'https://valtech-26e-dev-ed.develop.my.salesforce-scrt.com';
+        
+        // Configurações de autenticação
+        const authConfig = {
+            "orgId": "00Dbm0000084LF9",
+            "esDeveloperName": "GitHubSample",
+            "capabilitiesVersion": "1",
+            "platform": "Web",
+            "context": {
+              "appName": "salesApp",
+              "clientVersion": "1.2.3"
+            }
+        };
+
+        // Função para gerar UUID v4
+        function uuidv4() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // Função para mostrar o formulário de pré-chat
+        function showPreChatForm() {
+            document.getElementById('preChatForm').classList.add('visible');
+        }
+
+        // Função para criar conversa simplificada conforme tutorial
+        async function createConversation() {
+            const firstName = document.getElementById('firstName').value;
+            const email = document.getElementById('email').value;
+
+            if (!firstName || !email) {
+                alert('Por favor, preencha todos os campos');
+                return;
+            }
+
+            try {
+                const conversationId = uuidv4().toLowerCase();
+                const conversationData = {
+                    conversationId: conversationId,
+                    esDeveloperName: "GitHubSample"
+                };
+
+                const response = await makeAuthenticatedRequest(
+                    '/iamessage/api/v2/conversation',
+                    'POST',
+                    conversationData
+                );
+
+                console.log('Conversa criada:', response);
+                
+                // Adiciona a nova conversa à lista
+                const newChat = {
+                    id: conversationId,
+                    name: firstName,
+                    preview: `Email: ${email}`,
+                    isNew: true
+                };
+                
+                addChatToList(newChat);
+                document.getElementById('preChatForm').classList.remove('visible');
+                
+                // Limpa os campos do formulário
+                document.getElementById('firstName').value = '';
+                document.getElementById('email').value = '';
+                
+                // Inicia SSE para a nova conversa
+                subscribeToSSE(conversationId);
+                
+                // Envia primeira mensagem com dados de roteamento
+                await sendFirstMessage(conversationId, firstName, email);
+                
+                // Seleciona a nova conversa
+                selectChat(newChat);
+
+            } catch (error) {
+                console.error('Erro ao criar conversa:', error);
+                alert('Erro ao criar nova conversa. Por favor, tente novamente.');
+            }
+        }
+
+        // Função para adicionar chat à lista
+        function addChatToList(chat) {
+            const chatList = document.getElementById('chat-list');
+            const chatElement = document.createElement('div');
+            chatElement.className = 'chat-item';
+            chatElement.onclick = () => selectChat(chat);
+            chatElement.innerHTML = `
+                <div class="profile-img"></div>
+                <div class="chat-info">
+                    <div class="chat-name">${chat.name}</div>
+                    <div class="chat-preview">${chat.preview}</div>
+                </div>
+            `;
+            
+            // Adiciona a nova conversa no topo da lista
+            if (chat.isNew) {
+                chatList.insertBefore(chatElement, chatList.firstChild);
+            } else {
+                chatList.appendChild(chatElement);
+            }
+        }
+ 
+        // Funções de autenticação e requisições (mantidas do código anterior)
+        async function authenticate() {
+            try {
+                const response = await axios.post(
+                    `${API_BASE_URL}/iamessage/api/v2/authorization/unauthenticated/access-token`,
+                    authConfig,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+                
+                accessToken = response.data.accessToken;
+                document.getElementById('token-status').textContent = 'Token obtido';
+                document.getElementById('connection-status').textContent = 'Conectado';
+                console.log('Authentication successful');
+                return true;
+            } catch (error) {
+                console.error('Authentication error:', error);
+                document.getElementById('token-status').textContent = 'Erro na autenticação';
+                document.getElementById('connection-status').textContent = 'Erro de conexão';
+                return false;
+            }
+        }
+
+        async function makeAuthenticatedRequest(endpoint, method = 'GET', data = null) {
+            try {
+                const config = {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                };
+
+                let response;
+                if (method === 'GET') {
+                    response = await axios.get(`${API_BASE_URL}${endpoint}`, config);
+                } else if (method === 'POST') {
+                    response = await axios.post(`${API_BASE_URL}${endpoint}`, data, config);
+                }
+
+                return response.data;
+            } catch (error) {
+                console.error('API request error:', error);
+                if (error.response && error.response.status === 401) {
+                    const reauthenticated = await authenticate();
+                    if (reauthenticated) {
+                        return makeAuthenticatedRequest(endpoint, method, data);
+                    }
+                }
+                throw error;
+            }
+        }
+
+        // Resto das funções (mantidas do código anterior)
+        async function connectToAPI() {
+            document.getElementById('connection-status').textContent = 'Conectando...';
+            
+            const authenticated = await authenticate();
+            
+            if (authenticated) {
+                loadChats();
+            } else {
+                alert('Falha na autenticação. Por favor, tente novamente.');
+            }
+        }
+                
+        // Função para subscrever aos eventos SSE
+        function subscribeToSSE(conversationId) {
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            eventSource = new EventSource(`${API_BASE_URL}/eventrouter/v1/sse`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'X-Org-Id': authConfig.orgId,
+                    'Accept': '*/*'
+                }
+            });
+
+            eventSource.onmessage = function(event) {
+                console.log('Evento SSE:', event);
+                handleSSEEvent(event);
+            };
+
+            eventSource.addEventListener('CONVERSATION_MESSAGE', function(event) {
+                const data = JSON.parse(event.data);
+                handleNewMessage(data);
+            });
+
+            eventSource.addEventListener('CONVERSATION_ROUTING_RESULT', function(event) {
+                const data = JSON.parse(event.data);
+                handleRoutingResult(data);
+            });
+
+            eventSource.onerror = function(error) {
+                console.error('SSE Error:', error);
+                eventSource.close();
+            };
+        }
+
+        // Função para enviar primeira mensagem com dados de roteamento
+        async function sendFirstMessage(conversationId, firstName, email) {
+            const messageData = {
+                message: {
+                    inReplyToMessageId: "",
+                    id: uuidv4().toLowerCase(),
+                    messageType: "StaticContentMessage",
+                    staticContent: {
+                        formatType: "Text",
+                        text: "Olá! Iniciando nova conversa."
+                    }
+                },
+                esDeveloperName: "GitHubSample",
+                isNewMessagingSession: true,
+                routingAttributes: {
+                    "_firstName": firstName,
+                    "_email": email
+                },
+                language: "pt"
+            };
+
+            try {
+                await makeAuthenticatedRequest(
+                    `/iamessage/api/v2/conversation/${conversationId}/message`,
+                    'POST',
+                    messageData
+                );
+            } catch (error) {
+                console.error('Erro ao enviar primeira mensagem:', error);
+            }
+        }
+
+        // Função para enviar mensagens normais
+        async function sendMessage() {
+            if (!currentChat) {
+                alert('Selecione um chat primeiro!');
+                return;
+            }
+
+            const input = document.getElementById('message-input');
+            const text = input.value.trim();
+
+            if (text) {
+                try {
+                    const messageData = {
+                        message: {
+                            inReplyToMessageId: "",
+                            id: uuidv4().toLowerCase(),
+                            messageType: "StaticContentMessage",
+                            staticContent: {
+                                formatType: "Text",
+                                text: text
+                            }
+                        },
+                        esDeveloperName: "GitHubSample",
+                        isNewMessagingSession: false,
+                        routingAttributes: {},
+                        language: "pt"
+                    };
+
+                    await makeAuthenticatedRequest(
+                        `/iamessage/api/v2/conversation/${currentChat.id}/message`,
+                        'POST',
+                        messageData
+                    );
+
+                    // Adiciona mensagem à interface
+                    appendMessage(text, true);
+                    input.value = '';
+
+                } catch (error) {
+                    console.error('Erro ao enviar mensagem:', error);
+                    alert('Erro ao enviar mensagem');
+                }
+            }
+        }
+
+        // Função para tratar eventos SSE
+        function handleSSEEvent(event) {
+            if (event.type === 'ping') {
+                console.log('Ping recebido:', event.data);
+                return;
+            }
+
+            try {
+                const data = JSON.parse(event.data);
+                console.log('Evento processado:', event.type, data);
+            } catch (error) {
+                console.error('Erro ao processar evento SSE:', error);
+            }
+        }
+
+        // Função para tratar novas mensagens recebidas via SSE
+        function handleNewMessage(data) {
+            const message = JSON.parse(data.conversationEntry.entryPayload);
+            if (message.abstractMessage && 
+                message.abstractMessage.staticContent && 
+                message.abstractMessage.staticContent.text) {
+                appendMessage(
+                    message.abstractMessage.staticContent.text,
+                    data.conversationEntry.sender.role === 'EndUser'
+                );
+            }
+        }
+
+        // Função para tratar resultados de roteamento
+        function handleRoutingResult(data) {
+            const routingResult = JSON.parse(data.conversationEntry.entryPayload);
+            console.log('Resultado do roteamento:', routingResult);
+            
+            if (routingResult.estimatedWaitTime) {
+                const waitTime = routingResult.estimatedWaitTime.estimatedWaitTimeInSeconds;
+                if (waitTime > 0) {
+                    appendMessage(`Tempo estimado de espera: ${waitTime} segundos`, false);
+                }
+            }
+        }
+
+        // Função auxiliar para adicionar mensagens à interface
+        function appendMessage(text, isSent) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${isSent ? 'sent' : 'received'}`;
+            
+            const now = new Date();
+            const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+            
+            messageElement.innerHTML = `
+                ${text}
+                <span class="message-time">${time}</span>
+            `;
+            
+            messagesContainer.appendChild(messageElement);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Resto do código mantido (authenticate, makeAuthenticatedRequest, etc...)
+
+        // Inicialização
+        connectToAPI();
+
+        // Event listeners
+        document.getElementById('message-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
