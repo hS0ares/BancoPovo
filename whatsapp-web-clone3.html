@@ -441,7 +441,8 @@
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
                     'X-Org-Id': authConfig.orgId,
-                    'Accept': 'text/event-stream'
+                    'Accept': 'text/event-stream',
+                    'Access-Control-Allow-Origin': '*'
                 }
             });
 
