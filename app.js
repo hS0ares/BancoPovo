@@ -84,5 +84,15 @@ class WhatsAppInterface {
 
 // Inicializar a interface quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', () => {
-    new WhatsAppInterface();
+    initiateChat(); // Call the function from salesforceIntegration.js
+});
+
+document.getElementById("message-input").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        const messageText = event.target.value;
+        if (messageText.trim()) {
+            sendMessage(accessToken, conversationId, messageText); // Use Salesforce function to send
+            event.target.value = ""; // Clear input
+        }
+    }
 });
