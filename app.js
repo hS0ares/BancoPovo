@@ -16,24 +16,6 @@ class WhatsAppInterface {
                 this.messageInput.value = '';
             }
         });
-
-        // Inicializar conexão com Salesforce
-        this.initializeSalesforceConnection();
-    }
-
-    async initializeSalesforceConnection() {
-        try {
-            await client.generateAccessToken();
-            await client.createConversation();
-            
-            client.subscribeToSSE((eventType, data) => {
-                if (eventType === 'CONVERSATION_MESSAGE') {
-                    this.handleIncomingMessage(data);
-                }
-            });
-        } catch (error) {
-            console.error('Erro ao conectar com Salesforce:', error);
-        }
     }
 
     async sendMessage(text) {
