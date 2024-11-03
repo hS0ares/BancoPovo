@@ -14,17 +14,6 @@
     <div class="container">
         <!-- Sidebar com lista de conversas -->
         <div class="sidebar">
-            // To initiate SSE after access token is obtained
-async function initiateChat() {
-    const accessToken = await generateAccessToken();
-    if (accessToken) {
-        const conversationId = await createConversation(accessToken);
-        if (conversationId) {
-            subscribeToSSE(accessToken);
-            await sendMessage(accessToken, conversationId, "Hello from the client!");
-        }
-    }
-}Header do sidebar -->
             <div class="sidebar-header">
                 <div class="user-profile">
                     <img src="https://hs0ares.github.io/Cloudy-Kicks/eintein-ico.png" alt="Profile" class="profile-img">
