@@ -3,9 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://valtech-26e-dev-ed.develop.my.salesforce-scrt.com; connect-src 'self' https://valtech-26e-dev-ed.develop.my.salesforce-scrt.com">
-    -->
     <title>WhatsApp Web Clone</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -14,6 +11,7 @@
     <div class="container">
         <!-- Sidebar com lista de conversas -->
         <div class="sidebar">
+            <!-- Header do sidebar -->
             <div class="sidebar-header">
                 <div class="user-profile">
                     <img src="https://hs0ares.github.io/Cloudy-Kicks/eintein-ico.png" alt="Profile" class="profile-img">
@@ -32,7 +30,7 @@
             </div>
             
             <!-- Lista de conversas -->
-            <div class="chat-list">
+            <div id="chat-list" class="chat-list">
                 <!-- As conversas serão inseridas aqui dinamicamente -->
             </div>
         </div>
@@ -44,8 +42,8 @@
                 <div class="chat-contact-info">
                     <img src="https://hs0ares.github.io/Cloudy-Kicks/eintein-ico.png" alt="Contact" class="profile-img">
                     <div class="contact-details">
-                        <h3>Nome do Contato</h3>
-                        <span>online</span>
+                        <h3 id="contact-name">Nome do Contato</h3>
+                        <span id="contact-status">online</span>
                     </div>
                 </div>
                 <div class="chat-actions">
@@ -56,7 +54,7 @@
 
             <!-- Área de mensagens -->
             <div class="messages-container">
-                <div class="messages">
+                <div id="messages" class="messages">
                     <!-- As mensagens serão inseridas aqui dinamicamente -->
                 </div>
             </div>
@@ -66,15 +64,13 @@
                 <i class="fa-regular fa-face-smile"></i>
                 <i class="fa-solid fa-paperclip"></i>
                 <div class="message-input">
-                    <input type="text" placeholder="Digite uma mensagem">
+                    <input id="message-input" type="text" placeholder="Digite uma mensagem">
                 </div>
                 <i class="fa-solid fa-microphone"></i>
             </div>
         </div>
     </div>
-    <!-- Área de input-->
-    
-     
+    <!-- Load salesforceIntegration.js first, then app.js -->
     <script src="salesforceIntegration.js"></script>
     <script src="app.js"></script>
 </body>
