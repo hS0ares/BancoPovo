@@ -1,9 +1,3 @@
-// Inicialização do cliente de mensagens
-const client = new SalesforceMessagingClient(
-    'https://valtech-26e-dev-ed.develop.my.salesforce-scrt.com',
-    '00Dbm0000084LF9',
-    'GitHubSample'
-);
 
 class WhatsAppInterface {
     constructor() {
