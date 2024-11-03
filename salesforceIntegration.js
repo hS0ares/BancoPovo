@@ -1,7 +1,7 @@
 // salesforceIntegration.js
 
 async function generateAccessToken() {
-    const response = await fetch('https://{scrt-url}/iamessage/api/v2/authorization/unauthenticated/access-token', {
+    const response = await fetch('https://valtech-26e-dev-ed.develop.my.salesforce-scrt.com/iamessage/api/v2/authorization/unauthenticated/access-token', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -19,7 +19,7 @@ async function generateAccessToken() {
 
 async function createConversation(accessToken) {
     const conversationId = crypto.randomUUID(); // Generates a UUID
-    const response = await fetch('https://{scrt-url}/iamessage/api/v2/conversation', {
+    const response = await fetch('https://valtech-26e-dev-ed.develop.my.salesforce-scrt.com/iamessage/api/v2/conversation', {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -39,7 +39,7 @@ async function createConversation(accessToken) {
 }
 
 async function subscribeToSSE(accessToken) {
-    const url = 'https://{scrt-url}/eventrouter/v1/sse';
+    const url = 'https://valtech-26e-dev-ed.develop.my.salesforce-scrt.com/eventrouter/v1/sse';
 
     const response = await fetch(url, {
         method: 'GET',
@@ -66,7 +66,7 @@ async function subscribeToSSE(accessToken) {
 async function sendMessage(accessToken, conversationId, messageText) {
     const messageId = crypto.randomUUID(); // Generates a unique message ID
 
-    const response = await fetch(`https://{scrt-url}/iamessage/api/v2/conversation/${conversationId}/message`, {
+    const response = await fetch(`https://valtech-26e-dev-ed.develop.my.salesforce-scrt.com/iamessage/api/v2/conversation/${conversationId}/message`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
