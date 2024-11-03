@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Web Clone</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar com lista de conversas -->
+        <div class="sidebar">
+            <!-- Header do sidebar -->
+            <div class="sidebar-header">
+                <div class="user-profile">
+                    <img src="https://hs0ares.github.io/Cloudy-Kicks/eintein-ico.png" alt="Profile" class="profile-img">
+                    <div class="user-actions">
+                        <i class="fa-solid fa-circle-notch"></i>
+                        <i class="fa-solid fa-message"></i>
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </div>
+                </div>
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" placeholder="Pesquisar ou começar uma nova conversa">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lista de conversas -->
+            <div class="chat-list">
+                <!-- As conversas serão inseridas aqui dinamicamente -->
+            </div>
+        </div>
+
+        <!-- Área principal do chat -->
+        <div class="chat-area">
+            <!-- Header do chat -->
+            <div class="chat-header">
+                <div class="chat-contact-info">
+                    <img src="https://hs0ares.github.io/Cloudy-Kicks/eintein-ico.png" alt="Contact" class="profile-img">
+                    <div class="contact-details">
+                        <h3>Nome do Contato</h3>
+                        <span>online</span>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <i class="fa-solid fa-search"></i>
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                </div>
+            </div>
+
+            <!-- Área de mensagens -->
+            <div class="messages-container">
+                <div class="messages">
+                    <!-- As mensagens serão inseridas aqui dinamicamente -->
+                </div>
+            </div>
+
+            <!-- Área de input -->
+            <div class="input-area">
+                <i class="fa-regular fa-face-smile"></i>
+                <i class="fa-solid fa-paperclip"></i>
+                <div class="message-input">
+                    <input type="text" placeholder="Digite uma mensagem">
+                </div>
+                <i class="fa-solid fa-microphone"></i>
+            </div>
+        </div>
+    </div>
+
+    <script src="messaging-client.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
