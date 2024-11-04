@@ -1,4 +1,3 @@
-
 class WhatsAppInterface {
     constructor() {
         this.chatList = document.querySelector('.chat-list');
@@ -6,10 +5,13 @@ class WhatsAppInterface {
         this.messageInput = document.querySelector('.message-input input');
         this.initializeEventListeners();
         this.loadMockChats();
+
+        // Initialize SSE for receiving messages
+        this.initializeSSE();
     }
 
     initializeEventListeners() {
-        // Listener para envio de mensagens
+        // Listener for sending messages
         this.messageInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && this.messageInput.value.trim()) {
                 this.sendMessage(this.messageInput.value);
@@ -20,14 +22,34 @@ class WhatsAppInterface {
 
     async sendMessage(text) {
         try {
-            const messageId = await client.sendMessage(text, false);
+            // Use Salesforce integration function to send the message
+            const messageId = await client.sendMessage(text, false); // Modify this as per actual function in salesforceIntegration.js
             this.addMessage(text, 'sent', messageId);
         } catch (error) {
-            console.error('Erro ao enviar mensagem:', error);
+            console.error('Error sending message:', error);
         }
     }
 
+    initializeSSE() {
+        // Establish connection to the SSE endpoint for real-time updates
+        const eventSource = new EventSource('/eventrouter/v1/sse', {
+            headers: { 'Accept': 'text/event-stream' }
+        });
+
+        // Handle incoming messages
+        eventSource.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            this.handleIncomingMessage(data);
+        };
+
+        eventSource.onerror = (error) => {
+            console.error('SSE connection error:', error);
+            // Optionally add reconnection logic if needed
+        };
+    }
+
     handleIncomingMessage(data) {
+        // Parse incoming message from Salesforce
         const messageData = JSON.parse(data.conversationEntry.entryPayload);
         if (messageData.abstractMessage.staticContent) {
             this.addMessage(
@@ -42,14 +64,14 @@ class WhatsAppInterface {
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message', type);
         messageDiv.dataset.messageId = messageId;
-        
+
         const currentTime = new Date().toLocaleTimeString().slice(0, 5);
-        
+
         messageDiv.innerHTML = `
             ${text}
             <span class="time">${currentTime}</span>
         `;
-        
+
         this.messagesContainer.appendChild(messageDiv);
         this.scrollToBottom();
     }
@@ -59,7 +81,7 @@ class WhatsAppInterface {
     }
 
     loadMockChats() {
-        // Adiciona algumas conversas de exemplo à lista
+        // Add sample conversations to the chat list
         const mockChats = [
             { name: 'Família', lastMessage: 'Oi, tudo bem?', time: '10:30' },
             { name: 'Trabalho', lastMessage: 'A reunião foi remarcada', time: '09:15' },
@@ -82,17 +104,7 @@ class WhatsAppInterface {
     }
 }
 
-// Inicializar a interface quando o DOM estiver carregado
-document.addEventListener('DOMContentLoaded', () => {
-    initiateChat(); // Call the function from salesforceIntegration.js
-});
-
-document.getElementById("message-input").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        const messageText = event.target.value;
-        if (messageText.trim()) {
-            sendMessage(accessToken, conversationId, messageText); // Use Salesforce function to send
-            event.target.value = ""; // Clear input
-        }
-    }
+// Initialize WhatsApp interface
+document.addEventListener("DOMContentLoaded", () => {
+    new WhatsAppInterface();
 });
