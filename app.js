@@ -32,9 +32,11 @@ class WhatsAppInterface {
 
     initializeSSE() {
         // Establish connection to the SSE endpoint for real-time updates
-        const eventSource = new EventSource('/eventrouter/v1/sse', {
+        const BASE_URL = 'https://valtech-26e-dev-ed.develop.my.salesforce-scrt.com'; 
+        
+        const eventSource = new EventSource(`${BASE_URL}/eventrouter/v1/sse`, {
             headers: { 'Accept': 'text/event-stream' }
-        });
+        });        
 
         // Handle incoming messages
         eventSource.onmessage = (event) => {
