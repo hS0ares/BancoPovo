@@ -32,11 +32,19 @@ class WhatsAppInterface {
 
     initializeSSE() {
         // Establish connection to the SSE endpoint for real-time updates
-        const BASE_URL = 'https://valtech-26e-dev-ed.develop.my.salesforce-scrt.com'; 
+        //const BASE_URL = 'https://valtech-26e-dev-ed.develop.my.salesforce-scrt.com';
         
-        const eventSource = new EventSource(`${BASE_URL}/eventrouter/v1/sse`, {
-            headers: { 'Accept': 'text/event-stream' }
-        });        
+        //const eventSource = new EventSource(`${BASE_URL}/eventrouter/v1/sse`, {
+            //headers: { 'Accept': 'text/event-stream' }
+        //}); 
+        const sseUrl = 'https://seu-app-heroku.herokuapp.com/sse-proxy';
+        
+        const eventSource = new EventSource(sseUrl, {
+        headers: {
+            'Authorization': 'Bearer seu-token-aqui',
+            'X-Org-Id': 'seu-org-id-aqui'
+            }
+        });
 
         // Handle incoming messages
         eventSource.onmessage = (event) => {
