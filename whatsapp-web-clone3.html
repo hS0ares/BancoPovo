@@ -446,7 +446,12 @@
             eventSource.onmessage = (event) => {
                 console.log('Novo evento:', event.data);
                 handleSSEEvent(event);
-            };   
+            };
+            
+            eventSource.onerror = (error) => {
+              console.error('Erro no SSE:', error);
+              eventSource.close();
+            };
         }
                 
         // Função para subscrever aos eventos SSE
