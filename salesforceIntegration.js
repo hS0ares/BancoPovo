@@ -39,8 +39,9 @@ async function createConversation(accessToken) {
 }
 
 async function subscribeToSSE(accessToken) {
-    const url = 'https://valtech-26e-dev-ed.develop.my.salesforce-scrt.com/eventrouter/v1/sse';
-
+    //const url = 'https://valtech-26e-dev-ed.develop.my.salesforce-scrt.com/eventrouter/v1/sse';
+    const url = 'https://proxysse-a1e7e16f5fa5.herokuapp.com';
+    
     const response = await fetch(url, {
         method: 'GET',
         headers: {
