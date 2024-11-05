@@ -430,9 +430,27 @@
                 alert('Falha na autenticação. Por favor, tente novamente.');
             }
         }
+
+        function subscribeToSSE(conversationId){
+            const sseUrl = 'https://seu-app-heroku.herokuapp.com/sse-proxy';
+            
+            const eventSource = new EventSource(sseUrl, {
+            headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'X-Org-Id': authConfig.orgId,
+                    'Accept': 'text/event-stream',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            });
+            
+            eventSource.onmessage = (event) => {
+                console.log('Novo evento:', event.data);
+                handleSSEEvent(event);
+            };   
+        }
                 
         // Função para subscrever aos eventos SSE
-        function subscribeToSSE(conversationId) {
+        function subscribeToSSE2(conversationId) {
             if (eventSource) {
                 eventSource.close();
             }
